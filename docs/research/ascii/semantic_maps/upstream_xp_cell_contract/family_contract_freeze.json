@@ -15,7 +15,7 @@
     "review_queue_sha256": "3585a2c7f6a01cd6707495213345547264543cbd00e161426db38decb7f473a3",
     "cell_role_decisions_sha256": "8bb4417991204c47890488ddb6e73d350772023e901ae4842331070468cd9462",
     "cell_review_state_decisions_sha256": "3ebde2336d6019ff6c4c54fe91d85bbf35100b74fb8651cd972a56fc7e3cea09",
-    "cell_contract_manifest_sha256": "80de2a53f42f5fe7a05852db29a056ab91d6b423c4ea0c7cf72f67d4f23c0199",
+    "cell_contract_manifest_sha256": "1c2cfcae608d2928616b35de1f2ff562d308f103f1beac732a56e4b6c740e14c",
     "semantic_honesty_audit_sha256": "f208ed54f53a1329b970db03d3da751fe8074e40fdc7cd01131c4fc867340855",
     "family_topology_contracts_sha256": "2db8b3e46c2ec0cd5d349595ba14ba00ef9ba23cb5de2cc825ee5036ca2f8c42",
     "review_provenance_manifest_sha256": "4e9220d985078d5f028733b05991a22de6447bdee9fd26732804ef0662646022",
