@@ -292,3 +292,12 @@
 - Local origin fetch/push URLs now use that exact repository, and the checkout
   directory has the same exact repository name. The old local path is absent.
   No commit or push was performed as part of the rename.
+## P0C-05 · 2026-08-12 — first renamed-repository push correctly rejected concurrent README work
+
+- Push of local visual-proof commit `3a8f055` was rejected as non-fast-forward.
+  The renamed private remote had advanced through user-authored `586d2ad` and
+  `b6dfcd3`, which identify the viewer as an Asciicker Y9-2 REXPaint XP surface
+  and adjust its opening description.
+- No force push or overwrite is permitted. The successor must preserve those
+  user-authored README changes, integrate the stable-frame proof on top, rerun
+  every contract, and push only a fast-forward history.
