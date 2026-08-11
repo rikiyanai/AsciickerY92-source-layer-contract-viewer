@@ -52,5 +52,5 @@ Excluded: `xp_core.py`, queues, comparison and coordinate-recording CLIs,
 compilers, assignment saves, anchor editing, and semantic-map mutation.
 
 See [docs/provenance.md](docs/provenance.md) for source identities, hashes, and
-the private-visibility boundary. The reproducible capture recipe is stored
+the visibility boundary. The reproducible capture recipe is stored
 beside the GIF, and `./scripts/build-recording.sh` rebuilds the five-state GIF.

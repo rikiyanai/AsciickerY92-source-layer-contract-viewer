@@ -301,3 +301,19 @@
 - No force push or overwrite is permitted. The successor must preserve those
   user-authored README changes, integrate the stable-frame proof on top, rerun
   every contract, and push only a fast-forward history.
+
+## P0C-05 · 2026-08-12 — concurrent Asciicker Y9-2 README identity preserved
+
+- The local proof history was rebased onto user commits `586d2ad` and
+  `b6dfcd3`. The README keeps their Asciicker Y9-2 REXPaint `.xp` ownership and
+  applies the exact requested repository title together with the five stable
+  read-only product states.
+
+## P0C-05 · 2026-08-12 — README provenance sentence overfocused on visibility
+
+- The README linked the correct provenance document, but described it as the
+  private-visibility boundary. The front page should explain the product and
+  visual proof; repository visibility belongs in audit evidence and GitHub
+  metadata.
+- The successor keeps the provenance link and reproducible GIF recipe, but
+  removes redundant private-visibility wording from README prose.
