@@ -75,7 +75,7 @@
     }
   ],
   "source_final": {
-    "path": "/Users/r/Desktop/bundle_layer_audit_20260520/verifier_state_backups/state_FINAL_20260521-163326.json",
+    "path": "historical-source:/bundle_layer_audit_20260520/verifier_state_backups/state_FINAL_20260521-163326.json",
     "sha256": "ecc9a16112ce48beaeb0e24beba2ccc7399c4efc50d32505f3fd54f8e8d76020"
   },
   "totals": {

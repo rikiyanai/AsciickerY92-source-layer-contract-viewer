@@ -7,6 +7,8 @@ The package contains exactly 115 reviewed XP files, 573 raw layers, the frozen
 contract shards and decisions, and a parser that has no serialization or
 mutation authority.
 
+![Navigate the frozen 115-XP source-layer contract](docs/source-layer-contract-viewer.gif)
+
 ## Run once
 
 ```sh
@@ -30,4 +32,5 @@ Included:
 Excluded: `xp_core.py`, queues, comparison and coordinate-recording CLIs,
 compilers, assignment saves, anchor editing, and semantic-map mutation.
 
-See [docs/provenance.md](docs/provenance.md) for the source identity.
+See [docs/provenance.md](docs/provenance.md) for source identities, hashes, and
+the private-visibility boundary.

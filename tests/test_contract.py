@@ -3,6 +3,7 @@ from __future__ import annotations
 import subprocess
 import sys
 import unittest
+import json
 from pathlib import Path
 
 
@@ -30,6 +31,15 @@ class SourceLayerContract(unittest.TestCase):
         self.assertEqual(len(data.stems()), 115)
         for stem in data.stems():
             self.assertTrue((ROOT / "assets/sprites" / f"{stem}.xp").is_file())
+
+    def test_manifest_has_no_live_absolute_desktop_owner(self) -> None:
+        path = ROOT / "docs/research/ascii/semantic_maps/upstream_xp_cell_contract/manifest.json"
+        payload = json.loads(path.read_text())
+        self.assertEqual(
+            payload["source_final"]["path"],
+            "historical-source:/bundle_layer_audit_20260520/verifier_state_backups/state_FINAL_20260521-163326.json",
+        )
+        self.assertNotIn("/Users/", path.read_text())
 
 
 if __name__ == "__main__":
