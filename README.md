@@ -1,4 +1,4 @@
-# Source Layer Contract Viewer
+# Source Layer Contract Viewer for Asciicker-y9-2's REXpaint .xp sprites. 
 
 Standalone extraction of the FL-4162 read only source-layer contract
 viewer and its frozen normalized-XP corpus from asciicker-y9-2 
