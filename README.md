@@ -3,11 +3,14 @@
 Private standalone extraction of the FL-4162 read-only source-layer contract
 viewer and its frozen normalized-XP corpus.
 
+**Status: visual-proof hold.** Direct execution reaches the intended read-only
+contract viewer and the frozen corpus validates, but the prior 1440x900/13px GIF
+was removed because its dense text and state changes were not legible after
+README scaling. Runtime verification is not visual acceptance.
+
 The package contains exactly 115 reviewed XP files, 573 raw layers, the frozen
 contract shards and decisions, and a parser that has no serialization or
 mutation authority.
-
-![Navigate the frozen 115-XP source-layer contract](docs/source-layer-contract-viewer.gif)
 
 ## Run once
 
