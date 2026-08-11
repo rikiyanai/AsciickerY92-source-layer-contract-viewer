@@ -1,10 +1,9 @@
 # Source Layer Contract Viewer
 
-Private standalone extraction of the FL-4162 read-only source-layer contract
-viewer and its frozen normalized-XP corpus.
+Standalone extraction of the FL-4162 read only source-layer contract
+viewer and its frozen normalized-XP corpus from asciicker-y9-2 
 
-**Status: verified; personal acceptance remains separate.** Direct execution
-reaches the intended read-only contract viewer, the frozen corpus validates,
+Direct execution reaches the intended read-only contract viewer, the frozen corpus validates,
 and the recording below keeps the product identity, visual composition, frozen
 roles, assigned-cell counts, and read-only authority boundary on one screen.
 
