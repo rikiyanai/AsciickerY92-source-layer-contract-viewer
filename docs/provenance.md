@@ -11,9 +11,18 @@ XP parser`). Their extracted SHA-256 identities are:
 | `xp_read_model.py` | `f2ed6a03d8ca906cb60581709a60ac2a9666802153da206c34462f405ac19af3` |
 
 The standalone code adjustment changes `REPO_ROOT` from a nested pipeline
-checkout to this repository root. All 115 XP files and all contract evidence
-other than the three derived files below were copied byte-for-byte from the
-Y9-2 checkout observed at `242ecba44f76ed1120dadf06653fd6de47017b7f`.
+checkout to this repository root. The current viewer also adds a local
+`--compact` read-only contract surface for the accepted recording: it limits
+the animation panel to three adjacent frames and keeps the selected raw layer,
+frozen composition, assigned-cell count, and authority boundary on one screen.
+It neither writes artifacts nor changes the parser, XP bytes, ledger decisions,
+or compiler/runtime authority. This repository is therefore the maintained
+standalone identity for that read-only inspection surface, rather than a claim
+that its current viewer module is byte-identical to the original extraction.
+
+All 115 XP files and all contract evidence other than the three derived files
+below were copied byte-for-byte from the Y9-2 checkout observed at
+`242ecba44f76ed1120dadf06653fd6de47017b7f`.
 
 The frozen manifest's former absolute Desktop source path was replaced with the
 non-resolving `historical-source:` provenance label. The source-state SHA-256

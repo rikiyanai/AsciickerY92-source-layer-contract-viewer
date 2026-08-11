@@ -365,6 +365,12 @@ class ContractData:
             raise ContractDataError(f"missing source XP path: {source_key}")
         return Path(raw_path_value)
 
+    def source_xp_sha256(self, source_key: str) -> str:
+        expected = str((self.cell_record(source_key).get("source_xp") or {}).get("sha256") or "")
+        if len(expected) != 64 or any(char not in "0123456789abcdef" for char in expected):
+            raise ContractDataError(f"missing or invalid source XP hash: {source_key}")
+        return expected
+
     def expanded_cells(self, source_key: str) -> dict[tuple[int, int, int, int], dict[str, Any]]:
         if source_key not in self._expanded_cells:
             try:
@@ -675,6 +681,7 @@ class ViewerState:
         self.role_focus: str | None = None
         self.stack_mode = False
         self.grid_mode = True
+        self.compact = False
         self.highlight_current = True
         self.hidden_layer_keys: set[str] = set()
         self.status = ""
@@ -708,6 +715,12 @@ class ViewerState:
         path = candidate if candidate.is_file() else REPO_ROOT / source_path
         cache_key = str(path.resolve())
         if cache_key not in self._xp_cache:
+            expected_hash = data.source_xp_sha256(source_key)
+            actual_hash = _sha256_file(path)
+            if actual_hash != expected_hash:
+                raise ContractDataError(
+                    f"source XP hash mismatch for {source_key}: {path}"
+                )
             self._xp_cache[cache_key] = load_xp_path(path)
         return self._xp_cache[cache_key]
 
@@ -909,7 +922,11 @@ def _render_semantic_animation_grid(
     current_frame = max(0, min(state.frame, total_frames - 1))
     tiles: list[list[str]] = []
     raw_metadata = idx < 2
-    for frame_idx in range(total_frames):
+    frame_indices = range(total_frames)
+    if state.compact and total_frames > 3:
+        start = max(0, min(current_frame - 1, total_frames - 3))
+        frame_indices = range(start, start + 3)
+    for frame_idx in frame_indices:
         final = compose_layer_stack(state, data, angle=state.angle, frame=frame_idx)
         selected = slice_frame(
             selected_layer,
@@ -976,21 +993,28 @@ def compose_grid_surface(state: ViewerState, data: ContractData) -> list[str]:
     else:
         selected_lines = ["no renderable geometry"]
     label = _semantic_label(data, key)
-    semantic_box = _box_panel(f"SEMANTIC BIT · L{idx} · {label}", selected_lines)
+    semantic_title = (
+        f"SELECTED L{idx}"
+        if state.compact else f"SEMANTIC BIT · L{idx} · {label}"
+    )
+    semantic_box = _box_panel(semantic_title, selected_lines)
 
     terminal_cols = shutil.get_terminal_size(fallback=(180, 48)).columns
     left_width = max((_visible_len(line) for line in final_box), default=0)
     mid_width = max((_visible_len(line) for line in semantic_box), default=0)
     grid_width = max(24, terminal_cols - left_width - mid_width - 8)
     grid_lines = _render_semantic_animation_grid(state, data, max_width=grid_width)
-    grid_box = _box_panel(
+    projection_count = max(1, int((xp.get_metadata() or {}).get("projs") or 1))
+    grid_title = (
+        f"ANIMATION · P{state.projection + 1}/{projection_count} · selected bright"
+        if state.compact else
         (
             "ANIMATION GRID · "
-            f"PROJECTION {state.projection + 1}/{max(1, int((xp.get_metadata() or {}).get('projs') or 1))}"
+            f"PROJECTION {state.projection + 1}/{projection_count}"
             " · selected bit bright · final sprite dim"
-        ),
-        grid_lines,
+        )
     )
+    grid_box = _box_panel(grid_title, grid_lines)
     total_width = sum(
         max((_visible_len(line) for line in panel), default=0)
         for panel in (final_box, semantic_box, grid_box)
@@ -1092,20 +1116,35 @@ def compose_screen(state: ViewerState, data: ContractData) -> str:
     view_mode = "GRID" if state.grid_mode else "STACK" if state.stack_mode else "ISOLATED"
     inclusion = "HIDDEN-FROM-STACK" if key in state.hidden_layer_keys else "INCLUDED"
     highlight = "ON" if state.highlight_current else "OFF"
-    out.append(f"== SOURCE LAYER CONTRACT VIEWER (READ-ONLY) :: {state.current_stem()} =="
-               f"{corpus_position}"
-               f"  layer {state.layer_idx + 1}/{len(state.layer_keys)}"
-               f"  angle {state.angle}  projection {state.projection}  frame {state.frame}"
-               f"  view={view_mode}  highlight={highlight}  {inclusion}"
-               f"  autoplay={'ON:' + state.autoplay_axis if state.autoplay else 'OFF'}{foc}")
+    if state.compact:
+        out.append(
+            "== SOURCE LAYER CONTRACT VIEWER · READ-ONLY == "
+            f"{state.current_stem()} · L{idx} · frame {state.frame + 1} · "
+            f"angle {state.angle + 1} · {inclusion}"
+        )
+    else:
+        out.append(f"== SOURCE LAYER CONTRACT VIEWER (READ-ONLY) :: {state.current_stem()} =="
+                   f"{corpus_position}"
+                   f"  layer {state.layer_idx + 1}/{len(state.layer_keys)}"
+                   f"  angle {state.angle}  projection {state.projection}  frame {state.frame}"
+                   f"  view={view_mode}  highlight={highlight}  {inclusion}"
+                   f"  autoplay={'ON:' + state.autoplay_axis if state.autoplay else 'OFF'}{foc}")
     totals = data.corpus_totals
-    out.append(
-        "CORPUS: "
-        f"{totals['xp_files']} XP / {totals['layers']} raw layers "
-        f"({totals['visual_layers']} hand-reviewed visual + "
-        f"{totals['engine_metadata_layers']} engine metadata) / "
-        f"{totals['raw_cells']:,} cells / {totals['visible_cells']:,} visible"
-    )
+    if state.compact:
+        out.append(
+            "FROZEN CORPUS: "
+            f"{totals['xp_files']} XP · {totals['layers']} raw layers · "
+            f"{totals['visual_layers']} visual · "
+            f"{totals['raw_cells']:,} cells"
+        )
+    else:
+        out.append(
+            "CORPUS: "
+            f"{totals['xp_files']} XP / {totals['layers']} raw layers "
+            f"({totals['visual_layers']} hand-reviewed visual + "
+            f"{totals['engine_metadata_layers']} engine metadata) / "
+            f"{totals['raw_cells']:,} cells / {totals['visible_cells']:,} visible"
+        )
     out.append("")
 
     if state.grid_mode:
@@ -1169,6 +1208,33 @@ def compose_screen(state: ViewerState, data: ContractData) -> str:
             ))
     else:
         out.append(f"-- {key}: no renderable geometry (metadata layer?) --")
+
+    if state.compact:
+        cell_review_frame = data.cell_review_frame(key, state.angle, state.frame)
+        layer_roles = []
+        for layer_key in state.layer_keys:
+            layer_index = data.join(layer_key)["raw_layer_index"]
+            if isinstance(layer_index, int) and layer_index >= 2:
+                roles = ";".join(data.reviewed_roles(layer_key)) or "<unresolved>"
+                visibility = "hidden" if layer_key in state.hidden_layer_keys else "shown"
+                layer_roles.append(f"L{layer_index} {roles} [{visibility}]")
+        selected_roles = ";".join(data.reviewed_roles(key)) or "<unresolved>"
+        out.append("")
+        out.append("-- FROZEN SOURCE-LAYER CONTRACT --")
+        out.append("COMPOSITION: " + " + ".join(layer_roles))
+        out.append(
+            f"SELECTED: L{idx} {selected_roles} · "
+            f"{cell_review_frame['assigned_visible_cells']}/"
+            f"{cell_review_frame['visible_cells']} visible cells assigned · "
+            f"{len(cell_review_frame['unresolved_coordinates'])} unresolved"
+        )
+        out.append(
+            f"AUTHORITY: {data.contract_authority} · "
+            "runtime_authoritative:false · READ-ONLY"
+        )
+        out.append("")
+        out.append("[ / ] layer   n / p frame   . / , angle   v show/hide   q quit")
+        return "\n".join(out)
 
     out.append("")
     out.append("-- IMMUTABLE HAND + PROPOSAL EVIDENCE (authority:false) --")
@@ -1323,6 +1389,16 @@ def _advance_autoplay(state: ViewerState, data: ContractData) -> None:
         state.angle = (state.angle + 1) % sliced["rows"]
 
 
+def _selected_angle_rows(state: ViewerState, data: ContractData) -> int:
+    """Return the selected layer's real atlas row count, or zero when unavailable."""
+    info = data.join(state.current_key)
+    idx = info["raw_layer_index"]
+    xp = state.xp_for_key(state.current_key, data)
+    layer = xp.layers[idx] if isinstance(idx, int) and 0 <= idx < len(xp.layers) else None
+    sliced = slice_frame(layer, info["frame_wh"], 0, 0) if layer else None
+    return int(sliced["rows"]) if sliced else 0
+
+
 def handle_key(state: ViewerState, ch: str, data: ContractData) -> bool:
     """Return False to quit. Pure state mutation (testable)."""
     n = len(state.layer_keys)
@@ -1341,9 +1417,11 @@ def handle_key(state: ViewerState, ch: str, data: ContractData) -> bool:
         state.frame = state.angle = 0
         state.projection = 0
     elif ch == ".":
-        state.angle += 1
+        angle_rows = _selected_angle_rows(state, data)
+        state.angle = (state.angle + 1) % angle_rows if angle_rows else 0
     elif ch == ",":
-        state.angle = max(0, state.angle - 1)
+        angle_rows = _selected_angle_rows(state, data)
+        state.angle = (state.angle - 1) % angle_rows if angle_rows else 0
     elif ch == "n":
         info = data.join(state.current_key)
         idx = info["raw_layer_index"]
@@ -1434,6 +1512,8 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
                    help="start in display-only included-layer stack mode")
     p.add_argument("--unhighlighted", action="store_true",
                    help="start with current-layer highlighting disabled")
+    p.add_argument("--compact", action="store_true",
+                   help="show a compact contract surface with three adjacent animation frames")
     return p.parse_args(argv)
 
 
@@ -1489,21 +1569,26 @@ def main(argv: list[str]) -> int:
     except ContractDataError as exc:
         print(f"FAIL: {exc}", file=sys.stderr)
         return 2
-    state = ViewerState(
-        stem,
-        layer_keys,
-        microscope=microscope,
-        sprites=args.sprites,
-        corpus_layer_keys=None if microscope is not None else corpus_layer_keys,
-    )
-    if args.source_key:
-        state.layer_idx = layer_keys.index(args.source_key)
-    state.stack_mode = args.stack
-    state.highlight_current = not args.unhighlighted
-    if args.once or not sys.stdin.isatty():
-        print(compose_screen(state, data))
-        return 0
-    return run_interactive(state, data)
+    try:
+        state = ViewerState(
+            stem,
+            layer_keys,
+            microscope=microscope,
+            sprites=args.sprites,
+            corpus_layer_keys=None if microscope is not None else corpus_layer_keys,
+        )
+        if args.source_key:
+            state.layer_idx = layer_keys.index(args.source_key)
+        state.stack_mode = args.stack
+        state.compact = args.compact
+        state.highlight_current = not args.unhighlighted
+        if args.once or not sys.stdin.isatty():
+            print(compose_screen(state, data))
+            return 0
+        return run_interactive(state, data)
+    except ContractDataError as exc:
+        print(f"FAIL: {exc}", file=sys.stderr)
+        return 2
 
 
 if __name__ == "__main__":
