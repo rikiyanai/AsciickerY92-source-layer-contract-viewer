@@ -27,3 +27,5 @@
   highlight modes without making those transitions legible at README scale.
 - Highest supported stage: **Executed with automated contract verification**;
   visual verification and user acceptance are open.
+- The rejected `.tape` recipe was deleted because its fixed 13px capture would
+  recreate the same illegible proof; readability must be designed before recapture.
