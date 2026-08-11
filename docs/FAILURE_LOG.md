@@ -189,3 +189,106 @@
 - Main must cover the whole initial render/interactive path, and a subprocess
   regression must prove corrupt-asset CLI failure is non-zero, concise, and
   traceback-free.
+
+## P0C-05 / FL-4162 · 2026-08-12 — accepted GIF contained transient redraw frames
+
+- The accepted 1000×700 GIF had 271 decoded frames even though it was intended
+  to prove only five stable viewer states. The regression bound frames 0, 60,
+  115, 170, and 225, leaving 266 frames unchecked.
+- Full-sequence inspection found that the unbound frames include partial
+  terminal redraws between interactions. Those frames are not a fully rendered
+  product state, so the prior visual-proof acceptance is revoked.
+- Successor requirement: reproducibly capture five or six complete terminal
+  screenshots, assemble only those full canvases into the GIF, and decode,
+  composite, and hash every resulting frame. Every frame must retain the product
+  title, 115-XP / 573-layer totals, assigned/unresolved count, and `READ-ONLY`.
+
+## P0C-05 / FL-4162 · 2026-08-12 — first held-state capture recipe failed path parsing
+
+- VHS 0.11.0 rejected all five absolute `Screenshot` targets because the
+  generated recipe supplied those paths as unquoted tokens. No replacement GIF
+  was written, and the prior artifact remained untouched.
+- The parser's screenshot operand is a string path. The successor quotes each
+  generated absolute path, then re-runs the same five-state capture pipeline.
+
+## P0C-05 / FL-4162 · 2026-08-12 — second held-state capture lost post-screenshot input
+
+- Quoted screenshot paths succeeded for the first two states, but the `v` sent
+  immediately after the second browser screenshot did not reach the interactive
+  viewer. VHS timed out waiting for `HIDDEN-FROM-STACK`; its last screen still
+  showed the helmet as `INCLUDED`.
+- No replacement GIF was written. The successor adds a short uncaptured settle
+  interval after each screenshot before sending the next interactive key. These
+  waits cannot create animation frames because VHS is producing PNG stills, not
+  the final GIF.
+
+## P0C-05 / FL-4162 · 2026-08-12 — third held-state capture duplicated two stale states
+
+- The five-frame GIF decoded successfully, but full-frame hashes proved frames
+  0/1 were identical and frames 2/3 were identical. `Wait+Screen /L4/`
+  prematurely matched the old L3 screen's composition row, while the restored
+  screen was captured before the browser paint completed.
+- That GIF is rejected. The successor waits for the header-specific L4 state
+  and inserts an uncaptured paint-settle interval between every successful
+  screen match and PNG screenshot. The final GIF still contains only the five
+  PNG states, never the waits or terminal redraws.
+
+## P0C-05 / FL-4162 · 2026-08-12 — fourth held-state capture used a wrapped restore match
+
+- The header-specific L4 wait and screenshot settle succeeded through the
+  hidden state. The restore wait then timed out because the terminal extractor
+  wraps `player_helmet_regular` between `helm` and `et_regular`; the visible
+  restored screen itself correctly reported `INCLUDED`.
+- No replacement GIF was written. The successor matches the unwrapped header
+  token `INCLUDED`, which is absent from the preceding hidden-state header, and
+  retains the post-match paint-settle interval before capture.
+
+## P0C-05 / FL-4162 · 2026-08-12 — five complete held states replaced redraw video
+
+- `scripts/build-recording.sh` now uses VHS only to capture five complete PNG
+  states, then ImageMagick assembles those stills into the final GIF. A repeated
+  build produced the same binary SHA-256, so the pipeline is reproducible on the
+  verified toolchain.
+- Accepted artifact: 1000×700, 5 full-canvas frames, 1.80 seconds per state,
+  517,740 bytes, SHA-256
+  `2d41e4b2c64a784567180d9a3ed1aea2936fa5e40ac24acb112c5e1a7409cafb`.
+- All five frames were decoded and composited by the dependency-free regression.
+  Their RGB SHA-256 values are `fef8a80b…`, `a0fc1112…`, `1126d563…`,
+  `a0fc1112…`, and `aacf57df…`; the repeated helmet/restored hash is expected
+  because restoration returns to the selected-helmet visual state.
+- A vertical contact sheet of every frame was inspected. Each frame visibly
+  retains the viewer title and `READ-ONLY`, 115-XP / 573-layer frozen totals,
+  selected layer, composition, assigned/unresolved count, and authority. The
+  states are L3 armor, L4 helmet, helmet hidden, helmet restored, and L4 frame 2
+  at angle 2. No frame contains shell input or a partial terminal redraw.
+- Verification: 11/11 unit tests pass; VHS recipe validation, shell syntax,
+  scoped secret/path scan, and `git diff --check` pass. Highest proven stage is
+  **Verified**; personal acceptance remains separate.
+
+## P0C-05 / FL-4162 · 2026-08-12 — repository name omitted Asciicker Y9.2 identity
+
+- `source-layer-contract-viewer` described the tool category but not the frozen
+  game/source lineage that gives its 115-XP / 573-layer contract meaning.
+- The requested standalone identity is
+  `AsciickerY92-source-layer-contract-viewer`. Before renaming, the source was
+  confirmed private on `main`, the exact target name was confirmed absent, and
+  the local origin still pointed at the source repository.
+
+## P0C-05 / FL-4162 · 2026-08-12 — first local rename command used the parent directory
+
+- The GitHub rename succeeded, but the combined local origin/directory command
+  ran `git remote set-url` from the projects directory, which is not a
+  repository.
+  It stopped at that first command, so neither the local origin nor directory
+  had changed.
+- The successor runs `git remote set-url` inside the checkout, verifies it, and
+  only then moves the exact checkout path to the already-proven absent target.
+
+## P0C-05 / FL-4162 · 2026-08-12 — Asciicker Y9.2 repository identity applied
+
+- The private GitHub repository is now exactly
+  `rikiyanai/AsciickerY92-source-layer-contract-viewer`, still private with
+  default branch `main`.
+- Local origin fetch/push URLs now use that exact repository, and the checkout
+  directory has the same exact repository name. The old local path is absent.
+  No commit or push was performed as part of the rename.

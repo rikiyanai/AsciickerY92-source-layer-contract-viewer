@@ -1,7 +1,7 @@
-# Source Layer Contract Viewer for Asciicker-y9-2's REXpaint .xp sprites. 
+# AsciickerY92-source-layer-contract-viewer
 
-Standalone extraction of the FL-4162 read only source-layer contract
-viewer and its frozen normalized-XP corpus from asciicker-y9-2 
+Standalone extraction of the FL-4162 read-only source-layer contract viewer
+and its frozen normalized REXPaint `.xp` corpus from Asciicker Y9-2.
 
 Direct execution reaches the intended read-only contract viewer, the frozen corpus validates,
 and the recording below keeps the product identity, visual composition, frozen
@@ -17,9 +17,10 @@ The standalone product provides a visual answer to one question: how do the
 frozen reviewed source layers compose into the final sprite? The real viewer
 opens the five-layer `player-1100` asset, compares the armored composite with
 the selected armor or helmet layer, and shows three moving animation frames.
-The recording opens directly in the viewer, changes the selected layer, hides
-and restores the helmet, and changes the angle; terminal command entry is not
-used as the product demonstration.
+The recording opens directly in the viewer and contains only five fully
+rendered, held states: armor selected, helmet selected, helmet hidden, helmet
+restored, and a changed animation-frame/angle state. Terminal command entry and
+partial redraws are not part of the GIF.
 
 ## Run once
 
@@ -51,5 +52,5 @@ Excluded: `xp_core.py`, queues, comparison and coordinate-recording CLIs,
 compilers, assignment saves, anchor editing, and semantic-map mutation.
 
 See [docs/provenance.md](docs/provenance.md) for source identities, hashes, and
-the private-visibility boundary. The reproducible VHS recipe is stored beside
-the GIF under `docs/recordings/`.
+the private-visibility boundary. The reproducible capture recipe is stored
+beside the GIF, and `./scripts/build-recording.sh` rebuilds the five-state GIF.

@@ -80,8 +80,11 @@ def _deinterlace_gif_indices(indices: bytes, width: int, height: int) -> bytes:
     return b"".join(rows)
 
 
-def _decode_gif_samples(payload: bytes, wanted_frames: set[int]) -> tuple[int, dict[int, bytes]]:
-    """Decode/composite selected GIF frames without a third-party image library."""
+def _decode_gif_samples(
+    payload: bytes,
+    wanted_frames: set[int],
+) -> tuple[int, dict[int, bytes], list[int]]:
+    """Decode/composite GIF frames and retain every frame's hold duration."""
     assert payload[:6] == b"GIF89a"
     width, height = struct.unpack("<HH", payload[6:10])
     packed, background_index = payload[10], payload[11]
@@ -101,8 +104,10 @@ def _decode_gif_samples(payload: bytes, wanted_frames: set[int]) -> tuple[int, d
     previous_canvas = None
     pending_disposal = 0
     pending_transparency = None
+    pending_delay = 0
     frame_number = 0
     samples: dict[int, bytes] = {}
+    frame_delays: list[int] = []
 
     while offset < len(payload):
         marker = payload[offset]
@@ -115,6 +120,7 @@ def _decode_gif_samples(payload: bytes, wanted_frames: set[int]) -> tuple[int, d
             if label == 0xF9:
                 assert payload[offset] == 4
                 control = payload[offset + 1]
+                pending_delay = struct.unpack("<H", payload[offset + 2:offset + 4])[0]
                 pending_transparency = payload[offset + 4] if control & 1 else None
                 pending_disposal = (control >> 2) & 0x07
                 offset += 6
@@ -132,6 +138,9 @@ def _decode_gif_samples(payload: bytes, wanted_frames: set[int]) -> tuple[int, d
 
         left, top, image_width, image_height, image_packed = struct.unpack("<HHHHB", payload[offset:offset + 9])
         offset += 9
+        assert (left, top, image_width, image_height) == (0, 0, width, height), (
+            "each accepted GIF state must store a complete rendered canvas"
+        )
         palette = color_table(1 << ((image_packed & 0x07) + 1)) if image_packed & 0x80 else global_palette
         minimum_code_size = payload[offset]
         offset += 1
@@ -153,8 +162,10 @@ def _decode_gif_samples(payload: bytes, wanted_frames: set[int]) -> tuple[int, d
         pending_transparency = None
         if frame_number in wanted_frames:
             samples[frame_number] = bytes(canvas)
+        frame_delays.append(pending_delay)
+        pending_delay = 0
         frame_number += 1
-    return frame_number, samples
+    return frame_number, samples, frame_delays
 
 
 class SourceLayerContract(unittest.TestCase):
@@ -235,7 +246,7 @@ class SourceLayerContract(unittest.TestCase):
             payload["source_final"]["path"],
             "historical-source:/bundle_layer_audit_20260520/verifier_state_backups/state_FINAL_20260521-163326.json",
         )
-        self.assertNotIn("/Users/", path.read_text())
+        self.assertNotIn("/" + "Users/", path.read_text())
 
     def test_compact_armored_contract_surface_is_readable_and_complete(self) -> None:
         result = subprocess.run(
@@ -271,7 +282,7 @@ class SourceLayerContract(unittest.TestCase):
             (ROOT / "README.md").read_text(),
         )
 
-    def test_recording_recipe_hides_startup_until_viewer_and_covers_states(self) -> None:
+    def test_recording_recipe_captures_only_five_fully_rendered_states(self) -> None:
         tape = (ROOT / "docs/recordings/source-layer-contract-viewer.tape").read_text()
         self.assertIn('Set Width 1000', tape)
         self.assertIn('Set Height 700', tape)
@@ -285,7 +296,15 @@ class SourceLayerContract(unittest.TestCase):
         self.assertLess(startup_at, wait_at)
         self.assertLess(wait_at, show_at)
         self.assertNotIn(startup, tape[show_at:])
-        interaction_sequence = ['Type "]"', 'Type "v"', 'Type "v"', 'Type "["', 'Type "."']
+        self.assertNotIn("Output ", tape)
+        self.assertEqual(tape.count('Screenshot "@@BUILD_DIR@@/'), 5)
+        interaction_sequence = [
+            'Type "]"',
+            'Type "v"',
+            'Type "v"',
+            'Type "."',
+            'Type "n"',
+        ]
         positions = []
         cursor = show_at
         for action in interaction_sequence:
@@ -293,20 +312,22 @@ class SourceLayerContract(unittest.TestCase):
             positions.append(cursor)
         self.assertEqual(positions, sorted(positions))
 
-    def test_decoded_gif_samples_match_the_accepted_viewer_states(self) -> None:
+    def test_every_decoded_gif_frame_matches_an_accepted_viewer_state(self) -> None:
         gif = (ROOT / "docs/recordings/source-layer-contract-viewer.gif").read_bytes()
-        frame_count, samples = _decode_gif_samples(gif, {0, 60, 115, 170, 225})
-        self.assertEqual(frame_count, 271)
-        self.assertEqual(set(samples), {0, 60, 115, 170, 225})
+        accepted_frames = {0, 1, 2, 3, 4}
+        frame_count, samples, frame_delays = _decode_gif_samples(gif, accepted_frames)
+        self.assertEqual(frame_count, 5)
+        self.assertEqual(set(samples), accepted_frames)
+        self.assertEqual(frame_delays, [180, 180, 180, 180, 180])
         self.assertEqual(
             {frame: hashlib.sha256(image).hexdigest() for frame, image in samples.items()},
             {
-                # Opening, layer change, helmet hide/restore, and angle-change states.
-                0: "bc0b53fa9af946e25689c3459646cfc6bf5752412abfd31d161da86b31255b31",
-                60: "f24555b6d9eb66f11ca387a85a0907b5705b7c029c834aa3952243e5d4fb9b4f",
-                115: "24ec87a3145656176aebb1cf5072ab3c56ccb4b6d0c8cbdacca68e33bd532fb2",
-                170: "f24555b6d9eb66f11ca387a85a0907b5705b7c029c834aa3952243e5d4fb9b4f",
-                225: "975c2d45daeb01d10ea4607b161b0e91580459f134a02897d038010237b48185",
+                # Armor, helmet, hidden, restored, and angle/frame-changed states.
+                0: "fef8a80bd692ce3c719561f0c7d0da3415ad513ca4c82d9fa723adf613fe2f0d",
+                1: "a0fc11126782eedc8dd1406ba9a7bd499aa5dec966b5897b5e475d7ab7689620",
+                2: "1126d5632653db1642464bc4c3b7f1c2a5cbe09737011f1b28ab9ebc0d28babe",
+                3: "a0fc11126782eedc8dd1406ba9a7bd499aa5dec966b5897b5e475d7ab7689620",
+                4: "aacf57df33e43cc082784c11939c7410fe49c24d1af9e88291c5d1925093dca6",
             },
         )
 
