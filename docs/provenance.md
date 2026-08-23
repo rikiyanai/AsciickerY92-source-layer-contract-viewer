@@ -1,8 +1,6 @@
 # Provenance
 
-The three Python modules were extracted from private pipeline-v3 commit
-`7fdecabf44175d25d3793335dee4d38e8b089a81` (`fix(FL-4162): isolate read-only
-XP parser`). Their extracted SHA-256 identities are:
+The three Python modules were extracted from private pipeline-v3 commit `7fdecabf44175d25d3793335dee4d38e8b089a81`, where the read-only XP parser was isolated. Their extracted SHA-256 identities were:
 
 | File | SHA-256 before standalone root adjustment |
 | --- | --- |
@@ -10,25 +8,12 @@ XP parser`). Their extracted SHA-256 identities are:
 | `source_layer_contract_read_model.py` | `94c0441d0378b2646d5acbbbd5e71ffba4380909e3991ad861e9dbeca092fcce` |
 | `xp_read_model.py` | `f2ed6a03d8ca906cb60581709a60ac2a9666802153da206c34462f405ac19af3` |
 
-The standalone code adjustment changes `REPO_ROOT` from a nested pipeline
-checkout to this repository root. The current viewer also adds a local
-`--compact` read-only contract surface for the accepted recording: it limits
-the animation panel to three adjacent frames and keeps the selected raw layer,
-frozen composition, assigned-cell count, and authority boundary on one screen.
-It neither writes artifacts nor changes the parser, XP bytes, ledger decisions,
-or compiler/runtime authority. This repository is therefore the maintained
-standalone identity for that read-only inspection surface, rather than a claim
-that its current viewer module is byte-identical to the original extraction.
+The standalone adjustment changes `REPO_ROOT` from a nested pipeline checkout to this repository root. The viewer also adds a local `--compact` read-only display that limits the animation panel to three adjacent frames while keeping the selected raw layer, composition, assigned-cell count, and read-only boundary visible together.
 
-All 115 XP files and all contract evidence other than the three derived files
-below were copied byte-for-byte from the Y9-2 checkout observed at
-`242ecba44f76ed1120dadf06653fd6de47017b7f`.
+The viewer does not write artifacts or change the parser, XP bytes, ledger decisions, compiler state, or runtime state. It is therefore a maintained standalone inspection surface rather than a byte-identical copy of the original viewer module.
 
-The frozen manifest's former absolute Desktop source path was replaced with the
-non-resolving `historical-source:` provenance label. The source-state SHA-256
-inside that record was preserved. The manifest hash changed from
-`80de2a53...` to `1c2cfcae...`; the dependent family-freeze hash was updated to
-`36f73a64...`, and `compiler_cutover.json` was updated to bind that derived
-freeze. No review decision, source key, XP byte, count, or authority field was
-changed. The repository remains private because the parent code and asset
-publication license has not been separately approved.
+All 115 XP files and all contract data other than the three derived files below were copied byte-for-byte from the Y9-2 checkout observed at `242ecba44f76ed1120dadf06653fd6de47017b7f`.
+
+The frozen manifest's former absolute Desktop source path was replaced with the non-resolving `historical-source:` provenance label. The source-state SHA-256 inside that record was preserved. The manifest hash changed from `80de2a53...` to `1c2cfcae...`; the dependent family-freeze hash was updated to `36f73a64...`, and `compiler_cutover.json` was updated to bind that derived freeze. No review decision, source key, XP byte, count, or authority field was changed.
+
+This repository is published as a standalone inspection tool derived through Asciicker Y9-2. The upstream Asciicker project is credited in the repository README.
