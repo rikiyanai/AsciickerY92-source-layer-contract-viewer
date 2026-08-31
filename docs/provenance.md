@@ -17,3 +17,10 @@ All 115 XP files and all contract data other than the three derived files below 
 The frozen manifest's former absolute Desktop source path was replaced with the non-resolving `historical-source:` provenance label. The source-state SHA-256 inside that record was preserved. The manifest hash changed from `80de2a53...` to `1c2cfcae...`; the dependent family-freeze hash was updated to `36f73a64...`, and `compiler_cutover.json` was updated to bind that derived freeze. No review decision, source key, XP byte, count, or authority field was changed.
 
 This repository is published as a standalone inspection tool derived through Asciicker Y9-2. The upstream Asciicker project is credited in the repository README.
+
+The complete packaged-input and hand-label inventory is maintained as an
+index in [`docs/historical-evidence/`](historical-evidence/). It points to the
+115 existing XP files, frozen manifest, family freeze, and review-decision
+owners without duplicating or mutating the frozen corpus. The recording recipe
+now captures seven full-canvas held states, including three adjacent animation
+frames, before assembling the fast-review GIF at 0.55 seconds per state.

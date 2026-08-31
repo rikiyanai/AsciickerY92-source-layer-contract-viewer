@@ -1,14 +1,50 @@
 # AsciickerY92 Source Layer Contract Viewer
 
-A fork of [msokalski/asciicker](https://github.com/msokalski/asciicker), a CP437 3D ASCII engine.
+Derived from [msokalski/asciicker](https://github.com/msokalski/asciicker), a
+CP437 3D ASCII engine, this standalone read-only viewer inspects the reviewed
+REXPaint `.xp` source layers used by Asciicker Y9-2.
 
-A read-only viewer for the reviewed REXPaint `.xp` source layers used by Asciicker Y9-2. It shows how base, armor, helmet, weapon, and other raw layers combine without providing any editing or save path.
+## How an XP sprite becomes a source-layer contract
+
+REXPaint stores an XP sprite as a cell atlas with raw layers. In the Y9-2
+source contract, L0 is the color-key layer, L1 is the height/metadata layer,
+L2 is the primary body accumulator, and L3+ are ordinal visual overlays such as
+armor, helmet, or a weapon effect. The viewer preserves that raw-layer order
+while showing a read-only inspection projection; it does not claim to compile
+or author the runtime result.
+
+The atlas has separate axes that must not be flattened. A **frame** is one time
+position in the animation sequence. An **angle** is a directional row for that
+frame. A **projection** is a front/rear (or equivalent) atlas view. A semantic
+**body region** or role is a reviewed interpretation of selected cells on a
+source layer. The final-sprite panel composes included visual layers, the
+selected panel isolates the current raw layer, and the animation panel shows
+the adjacent frame cells together. `n`/`p` moves frames, `.`/`,` moves angles,
+`r` changes projection, and `v` demonstrates the display-only hide/show seam.
+
+The frozen ledger, review decisions, and any hand-entered labels are historical
+evidence. They identify what was reviewed and why; they are not compiler or
+runtime authority. The complete non-duplicating inventory is in
+[docs/historical-evidence/](docs/historical-evidence/).
+
+Direct execution reaches the intended read-only contract viewer, the frozen corpus validates,
+and the recording below keeps the product identity, visual composition, frozen
+roles, assigned-cell counts, and read-only authority boundary on one screen.
 
 The packaged corpus contains 115 reviewed XP files and 573 raw layers. The viewer reads the frozen layer decisions and cell-role data but cannot change them.
 
 ![Read-only player body, armor, and helmet source-layer contract](docs/recordings/source-layer-contract-viewer.gif)
 
-The example above opens `player-1100`, compares the armored composite with the selected armor or helmet layer, and steps through several animation and angle states.
+The standalone product provides a visual answer to one question: how do the
+frozen reviewed source layers compose into the final sprite? The real viewer
+opens the five-layer `player-1100` asset, compares the armored composite with
+the selected armor or helmet layer, and shows three adjacent animation frames.
+The recording opens directly in the viewer and contains seven fully rendered,
+held states: armor frame 1, armor frame 2, armor frame 3, helmet selected,
+helmet hidden, helmet restored, and a changed animation-frame/angle state.
+Terminal command entry and partial redraws are not part of the GIF. The held
+states are paced at 0.55 seconds each for fast review while the viewer's real
+autoplay indicator and frame controls remain visible.
 
 ## Run
 
@@ -35,4 +71,11 @@ For the compact armored view shown in the recording:
 
 The viewer has no serialization or mutation path. It does not edit sprite files, assignments, anchors, semantic maps, or compiler/runtime state.
 
-See [docs/provenance.md](docs/provenance.md) for the extraction source and packaged-data provenance. Historical development records remain in [docs/FAILURE_LOG.md](docs/FAILURE_LOG.md).
+Excluded: `xp_core.py`, queues, comparison and coordinate-recording CLIs,
+compilers, assignment saves, anchor editing, and semantic-map mutation.
+
+See [docs/provenance.md](docs/provenance.md) for source identities, hashes, and
+the visibility boundary. The reproducible capture recipe is stored
+beside the GIF, and `./scripts/build-recording.sh` rebuilds the seven-state GIF.
+Historical development records remain in
+[docs/FAILURE_LOG.md](docs/FAILURE_LOG.md).

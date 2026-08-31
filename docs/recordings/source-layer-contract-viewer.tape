@@ -18,26 +18,38 @@ Sleep 250ms
 Screenshot "@@BUILD_DIR@@/01-armor-selected.png"
 Sleep 250ms
 
+# Advance through the three real animation frames before changing layer.
+Type "n"
+Wait+Screen /frame 2/
+Sleep 250ms
+Screenshot "@@BUILD_DIR@@/02-animation-frame-2.png"
+Sleep 250ms
+Type "n"
+Wait+Screen /frame 3/
+Sleep 250ms
+Screenshot "@@BUILD_DIR@@/03-animation-frame-3.png"
+Sleep 250ms
+
 Type "]"
 Wait+Screen /player-1100 · L4 · frame/
 Sleep 250ms
-Screenshot "@@BUILD_DIR@@/02-helmet-selected.png"
+Screenshot "@@BUILD_DIR@@/04-helmet-selected.png"
 Sleep 250ms
 Type "v"
 Wait+Screen /HIDDEN-FROM-STACK/
 Sleep 250ms
-Screenshot "@@BUILD_DIR@@/03-helmet-hidden.png"
+Screenshot "@@BUILD_DIR@@/05-helmet-hidden.png"
 Sleep 250ms
 Type "v"
 Wait+Screen /INCLUDED/
 Sleep 250ms
-Screenshot "@@BUILD_DIR@@/04-helmet-restored.png"
+Screenshot "@@BUILD_DIR@@/06-helmet-restored.png"
 Sleep 250ms
 Type "."
 Type "n"
 Wait+Screen /frame 2 · angle 2/
 Sleep 250ms
-Screenshot "@@BUILD_DIR@@/05-angle-and-frame-changed.png"
+Screenshot "@@BUILD_DIR@@/07-angle-and-frame-changed.png"
 Sleep 250ms
 
 Hide

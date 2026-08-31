@@ -282,7 +282,7 @@ class SourceLayerContract(unittest.TestCase):
             (ROOT / "README.md").read_text(),
         )
 
-    def test_recording_recipe_captures_only_five_fully_rendered_states(self) -> None:
+    def test_recording_recipe_captures_only_seven_fully_rendered_states(self) -> None:
         tape = (ROOT / "docs/recordings/source-layer-contract-viewer.tape").read_text()
         self.assertIn('Set Width 1000', tape)
         self.assertIn('Set Height 700', tape)
@@ -297,8 +297,10 @@ class SourceLayerContract(unittest.TestCase):
         self.assertLess(wait_at, show_at)
         self.assertNotIn(startup, tape[show_at:])
         self.assertNotIn("Output ", tape)
-        self.assertEqual(tape.count('Screenshot "@@BUILD_DIR@@/'), 5)
+        self.assertEqual(tape.count('Screenshot "@@BUILD_DIR@@/'), 7)
         interaction_sequence = [
+            'Type "n"',
+            'Type "n"',
             'Type "]"',
             'Type "v"',
             'Type "v"',
@@ -314,22 +316,33 @@ class SourceLayerContract(unittest.TestCase):
 
     def test_every_decoded_gif_frame_matches_an_accepted_viewer_state(self) -> None:
         gif = (ROOT / "docs/recordings/source-layer-contract-viewer.gif").read_bytes()
-        accepted_frames = {0, 1, 2, 3, 4}
+        accepted_frames = set(range(7))
         frame_count, samples, frame_delays = _decode_gif_samples(gif, accepted_frames)
-        self.assertEqual(frame_count, 5)
+        self.assertEqual(frame_count, 7)
         self.assertEqual(set(samples), accepted_frames)
-        self.assertEqual(frame_delays, [180, 180, 180, 180, 180])
+        self.assertEqual(frame_delays, [55, 55, 55, 55, 55, 55, 55])
         self.assertEqual(
             {frame: hashlib.sha256(image).hexdigest() for frame, image in samples.items()},
             {
-                # Armor, helmet, hidden, restored, and angle/frame-changed states.
+                # Armor frames 1-3, helmet, hidden, restored, and angle/frame.
                 0: "fef8a80bd692ce3c719561f0c7d0da3415ad513ca4c82d9fa723adf613fe2f0d",
-                1: "a0fc11126782eedc8dd1406ba9a7bd499aa5dec966b5897b5e475d7ab7689620",
-                2: "1126d5632653db1642464bc4c3b7f1c2a5cbe09737011f1b28ab9ebc0d28babe",
+                1: "334ec1296f2349fb9db3d9bbc64a10285ea9e0a12ba87e834d6ad1aec4a0b86f",
+                2: "9a30bced2ec4bced4e75c3fdf78ce91c6d38f9b5d4aee81e394adbebc55f9bfc",
                 3: "a0fc11126782eedc8dd1406ba9a7bd499aa5dec966b5897b5e475d7ab7689620",
-                4: "aacf57df33e43cc082784c11939c7410fe49c24d1af9e88291c5d1925093dca6",
+                4: "1126d5632653db1642464bc4c3b7f1c2a5cbe09737011f1b28ab9ebc0d28babe",
+                5: "a0fc11126782eedc8dd1406ba9a7bd499aa5dec966b5897b5e475d7ab7689620",
+                6: "aacf57df33e43cc082784c11939c7410fe49c24d1af9e88291c5d1925093dca6",
             },
         )
+
+    def test_historical_evidence_index_binds_complete_corpus(self) -> None:
+        index = json.loads((ROOT / "docs/historical-evidence/manifest.json").read_text())
+        paths = sorted((ROOT / "assets/sprites").glob("*.xp"))
+        self.assertEqual(index["xp_assets"]["expected_count"], len(paths))
+        self.assertEqual(index["xp_assets"]["expected_count"], 115)
+        self.assertEqual(index["frozen_contract"]["raw_layers"], 573)
+        for relative in index["source_owned_evidence"]:
+            self.assertTrue((ROOT / relative).is_file(), relative)
 
     def test_compact_surface_reports_layer_hide_state(self) -> None:
         from source_layer_contract_viewer import (

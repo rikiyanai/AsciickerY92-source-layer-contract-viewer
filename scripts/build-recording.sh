@@ -9,10 +9,12 @@ build_dir=$(mktemp -d "${TMPDIR:-/tmp}/source-layer-contract-viewer.XXXXXX")
 cleanup() {
     rm -f -- \
         "$build_dir/01-armor-selected.png" \
-        "$build_dir/02-helmet-selected.png" \
-        "$build_dir/03-helmet-hidden.png" \
-        "$build_dir/04-helmet-restored.png" \
-        "$build_dir/05-angle-and-frame-changed.png" \
+        "$build_dir/02-animation-frame-2.png" \
+        "$build_dir/03-animation-frame-3.png" \
+        "$build_dir/04-helmet-selected.png" \
+        "$build_dir/05-helmet-hidden.png" \
+        "$build_dir/06-helmet-restored.png" \
+        "$build_dir/07-angle-and-frame-changed.png" \
         "$build_dir/capture.tape" \
         "$build_dir/source-layer-contract-viewer.gif"
     rmdir "$build_dir" 2>/dev/null || true
@@ -33,10 +35,12 @@ sed "s|@@BUILD_DIR@@|$build_dir|g" "$tape_template" > "$build_dir/capture.tape"
 
 set -- \
     "$build_dir/01-armor-selected.png" \
-    "$build_dir/02-helmet-selected.png" \
-    "$build_dir/03-helmet-hidden.png" \
-    "$build_dir/04-helmet-restored.png" \
-    "$build_dir/05-angle-and-frame-changed.png"
+    "$build_dir/02-animation-frame-2.png" \
+    "$build_dir/03-animation-frame-3.png" \
+    "$build_dir/04-helmet-selected.png" \
+    "$build_dir/05-helmet-hidden.png" \
+    "$build_dir/06-helmet-restored.png" \
+    "$build_dir/07-angle-and-frame-changed.png"
 for frame_path do
     test -s "$frame_path" || {
         echo "FAIL: missing captured state: $frame_path" >&2
@@ -44,6 +48,6 @@ for frame_path do
     }
 done
 
-magick -delay 180 "$@" -loop 0 "$build_dir/source-layer-contract-viewer.gif"
+magick -delay 55 "$@" -loop 0 "$build_dir/source-layer-contract-viewer.gif"
 mv -f -- "$build_dir/source-layer-contract-viewer.gif" "$gif_path"
 magick identify "$gif_path"

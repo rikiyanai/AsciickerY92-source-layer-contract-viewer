@@ -317,3 +317,41 @@
   metadata.
 - The successor keeps the provenance link and reproducible GIF recipe, but
   removes redundant private-visibility wording from README prose.
+
+## P0C-05 / FL-4162 · 2026-08-31 — animation-proof and evidence-index successor started
+
+- Requirement: the public proof must show the real source-layer viewer moving
+  through adjacent animation frames at a useful pace while retaining layer,
+  projection, angle, hide/show, and read-only contract evidence; the repository
+  must expose every packaged XP input and source-owned review evidence without
+  mutating the frozen corpus.
+- Current owners are `scripts/source_layer_contract_viewer.py`,
+  `docs/recordings/source-layer-contract-viewer.tape`,
+  `scripts/build-recording.sh`, and the existing recording regression. The
+  stale owners are the README's five-state/1.80-second wording and the absence
+  of a dedicated historical-evidence index.
+- The successor is limited to documentation, recording recipe/assembly, tests,
+  provenance indexes, and the failure log. It does not change the parser,
+  contract ledger, review decisions, or XP bytes.
+- This attempt is **Implemented** only until the new recipe, decoded GIF, full
+  test suite, link checks, and bounded visual inspection pass.
+
+## P0C-05 / FL-4162 · 2026-08-31 — seven-state animation walkthrough verified
+
+- The canonical VHS route now captures armor frames 1–3 before changing raw
+  layer, hiding/restoring the helmet, and changing angle/frame. The launcher is
+  hidden until the viewer title renders, and the build assembles only the seven
+  held full-canvas screenshots.
+- The accepted artifact is 1000×700, 7 frames, 726754 bytes, and SHA-256
+  `1a0f7946a326e679da3bfa6bb055855e3e0c1427a0e61472f29ad3893cb02f9f`. Every
+  frame uses a 55-centisecond delay and decodes to a complete viewer canvas.
+- The contact sheet and representative first/last frame previews retain the
+  viewer title, 115-XP / 573-layer totals, selected layer, three-frame
+  animation panel, frozen composition, assigned-cell count, and read-only
+  authority. No command entry or partial redraw is present.
+- `python3 -m unittest discover -s tests -v` passes 12 of 12 tests. The highest
+  supported stage is **Verified** for the automated recording contract and
+  bounded visual proof; personal acceptance remains separate.
+- Prepared About description: “Read-only FL-4162 source-layer contract viewer
+  over 115 reviewed Asciicker Y9-2 REXPaint XP sprites with layer ownership,
+  animation frames, and frozen provenance.”
