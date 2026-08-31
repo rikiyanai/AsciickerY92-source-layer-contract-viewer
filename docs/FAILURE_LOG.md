@@ -355,3 +355,37 @@
 - Prepared About description: “Read-only FL-4162 source-layer contract viewer
   over 115 reviewed Asciicker Y9-2 REXPaint XP sprites with layer ownership,
   animation frames, and frozen provenance.”
+
+## P0C-05 / FL-4162 · 2026-08-31 — seven-state GIF claim rejected by operator
+
+- Operator correction: the previous seven-state GIF was not accepted as the
+  requested update. It linked a GIF and showed limited frame stepping, but it
+  did not show enough of the viewer or the broader XP/layer navigation.
+- The corrected requirement is stricter: update the capture script, regenerate
+  the committed GIF, show more viewer surfaces, show real frame progression at
+  a faster review pace, keep all 115 XP files and 573 raw layers reachable, keep
+  hand-labeled/review evidence tracked in `docs/historical-evidence/`, open the
+  regenerated GIF in Finder, and verify the binary by decoded frame/timing
+  checks before pushing.
+- This entry rejects the earlier completion claim. The successor owns
+  `docs/recordings/source-layer-contract-viewer.tape`,
+  `scripts/build-recording.sh`, README recording text, tests, and the
+  regenerated `docs/recordings/source-layer-contract-viewer.gif`.
+
+## P0C-05 / FL-4162 · 2026-08-31 — thirteen-state faster source-layer GIF verified
+
+- The corrected VHS recipe now captures thirteen held viewer states instead of
+  seven. The sequence shows armor animation frame progression, angle and
+  projection changes, helmet hide/restore, L0/L1/L2 raw-layer inspection, and a
+  transition to the next XP stem while retaining the 115-XP / 573-layer corpus
+  totals on the viewer surface.
+- The regenerated `docs/recordings/source-layer-contract-viewer.gif` is
+  1000×700, 13 frames, 1,434,477 bytes, SHA-256
+  `6b9f198bdf3b30657fb8c775ac5ecb2abd9c8095165913a99adf5c5ae8b10d6b`,
+  with an 18-centisecond delay per frame.
+- Verification performed in-session: `./scripts/build-recording.sh` completed,
+  `python3 -m unittest discover -s tests -v` passed 12/12, decoded frame-hash
+  and timing checks matched the test contract, the GIF was revealed in Finder
+  with `open -R`, and a bounded contact-sheet preview was visually inspected.
+- Highest supported stage: **Verified** for regenerated GIF behavior, test
+  coverage, and corpus reachability. Operator acceptance remains separate.

@@ -39,12 +39,13 @@ The standalone product provides a visual answer to one question: how do the
 frozen reviewed source layers compose into the final sprite? The real viewer
 opens the five-layer `player-1100` asset, compares the armored composite with
 the selected armor or helmet layer, and shows three adjacent animation frames.
-The recording opens directly in the viewer and contains seven fully rendered,
-held states: armor frame 1, armor frame 2, armor frame 3, helmet selected,
-helmet hidden, helmet restored, and a changed animation-frame/angle state.
+The recording opens directly in the viewer and contains thirteen fully rendered,
+fast held states: armor frames 1-3, armor angle/projection changes, helmet
+selection, helmet hide/restore, raw L0/L1/L2 layer navigation, a changed
+animation-frame/angle state, and navigation to another XP stem.
 Terminal command entry and partial redraws are not part of the GIF. The held
-states are paced at 0.55 seconds each for fast review while the viewer's real
-autoplay indicator and frame controls remain visible.
+states are paced at 0.18 seconds each for fast review while the viewer's real
+frame, angle, projection, layer, and XP navigation controls remain visible.
 
 ## Run
 

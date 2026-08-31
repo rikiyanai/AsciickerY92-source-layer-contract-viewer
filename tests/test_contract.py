@@ -282,7 +282,7 @@ class SourceLayerContract(unittest.TestCase):
             (ROOT / "README.md").read_text(),
         )
 
-    def test_recording_recipe_captures_only_seven_fully_rendered_states(self) -> None:
+    def test_recording_recipe_captures_only_thirteen_fast_rendered_states(self) -> None:
         tape = (ROOT / "docs/recordings/source-layer-contract-viewer.tape").read_text()
         self.assertIn('Set Width 1000', tape)
         self.assertIn('Set Height 700', tape)
@@ -297,15 +297,21 @@ class SourceLayerContract(unittest.TestCase):
         self.assertLess(wait_at, show_at)
         self.assertNotIn(startup, tape[show_at:])
         self.assertNotIn("Output ", tape)
-        self.assertEqual(tape.count('Screenshot "@@BUILD_DIR@@/'), 7)
+        self.assertEqual(tape.count('Screenshot "@@BUILD_DIR@@/'), 13)
         interaction_sequence = [
             'Type "n"',
             'Type "n"',
+            'Type "."',
+            'Type "r"',
             'Type "]"',
             'Type "v"',
             'Type "v"',
+            'Type "]"',
+            'Type "]"',
+            'Type "]"',
             'Type "."',
             'Type "n"',
+            'Type "}"',
         ]
         positions = []
         cursor = show_at
@@ -316,22 +322,29 @@ class SourceLayerContract(unittest.TestCase):
 
     def test_every_decoded_gif_frame_matches_an_accepted_viewer_state(self) -> None:
         gif = (ROOT / "docs/recordings/source-layer-contract-viewer.gif").read_bytes()
-        accepted_frames = set(range(7))
+        accepted_frames = set(range(13))
         frame_count, samples, frame_delays = _decode_gif_samples(gif, accepted_frames)
-        self.assertEqual(frame_count, 7)
+        self.assertEqual(frame_count, 13)
         self.assertEqual(set(samples), accepted_frames)
-        self.assertEqual(frame_delays, [55, 55, 55, 55, 55, 55, 55])
+        self.assertEqual(frame_delays, [18] * 13)
         self.assertEqual(
             {frame: hashlib.sha256(image).hexdigest() for frame, image in samples.items()},
             {
-                # Armor frames 1-3, helmet, hidden, restored, and angle/frame.
+                # Armor frames 1-3, angle/projection changes, helmet hide/restore,
+                # raw L0/L1/L2 layer navigation, angle/frame change, and next XP.
                 0: "fef8a80bd692ce3c719561f0c7d0da3415ad513ca4c82d9fa723adf613fe2f0d",
                 1: "334ec1296f2349fb9db3d9bbc64a10285ea9e0a12ba87e834d6ad1aec4a0b86f",
                 2: "9a30bced2ec4bced4e75c3fdf78ce91c6d38f9b5d4aee81e394adbebc55f9bfc",
-                3: "a0fc11126782eedc8dd1406ba9a7bd499aa5dec966b5897b5e475d7ab7689620",
-                4: "1126d5632653db1642464bc4c3b7f1c2a5cbe09737011f1b28ab9ebc0d28babe",
+                3: "8dc1db88e3a07ae3ba0e7c01a1ecaafb451bd8bb86104f5ca68ee0d7e3dc7762",
+                4: "756c1d241d0bb0afa2aec09a9e377f192a79a2beb81e430c903def1fa3a17b6b",
                 5: "a0fc11126782eedc8dd1406ba9a7bd499aa5dec966b5897b5e475d7ab7689620",
-                6: "aacf57df33e43cc082784c11939c7410fe49c24d1af9e88291c5d1925093dca6",
+                6: "1126d5632653db1642464bc4c3b7f1c2a5cbe09737011f1b28ab9ebc0d28babe",
+                7: "a0fc11126782eedc8dd1406ba9a7bd499aa5dec966b5897b5e475d7ab7689620",
+                8: "9ea98f74201e043250592e7167077963a7ed450d986092fca2ca550dda5ae33e",
+                9: "14cd474a8a4c371e4ab90f53a1afd39ada53f645e65c2fa294e1d11b755a0410",
+                10: "37f740e0a1db3d70e716e7c0406111e162daaaa5e3720f7d3cebc4b3b745d5c5",
+                11: "7a4f332e04fff8837557faa636d9d66f90de87eb76770dfa3c3c4e8da1dff50b",
+                12: "448f3f4bf1bc55f3787dc66641b23284f0fe95b95e9df280e30f2614906d91e8",
             },
         )
 

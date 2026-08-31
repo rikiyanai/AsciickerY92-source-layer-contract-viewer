@@ -11,10 +11,16 @@ cleanup() {
         "$build_dir/01-armor-selected.png" \
         "$build_dir/02-animation-frame-2.png" \
         "$build_dir/03-animation-frame-3.png" \
-        "$build_dir/04-helmet-selected.png" \
-        "$build_dir/05-helmet-hidden.png" \
-        "$build_dir/06-helmet-restored.png" \
-        "$build_dir/07-angle-and-frame-changed.png" \
+        "$build_dir/04-armor-angle-2.png" \
+        "$build_dir/05-armor-projection-2.png" \
+        "$build_dir/06-helmet-selected.png" \
+        "$build_dir/07-helmet-hidden.png" \
+        "$build_dir/08-helmet-restored.png" \
+        "$build_dir/09-layer-l0-metadata.png" \
+        "$build_dir/10-layer-l1-metadata.png" \
+        "$build_dir/11-layer-l2-body.png" \
+        "$build_dir/12-angle-and-frame-changed.png" \
+        "$build_dir/13-next-xp-stem.png" \
         "$build_dir/capture.tape" \
         "$build_dir/source-layer-contract-viewer.gif"
     rmdir "$build_dir" 2>/dev/null || true
@@ -37,10 +43,16 @@ set -- \
     "$build_dir/01-armor-selected.png" \
     "$build_dir/02-animation-frame-2.png" \
     "$build_dir/03-animation-frame-3.png" \
-    "$build_dir/04-helmet-selected.png" \
-    "$build_dir/05-helmet-hidden.png" \
-    "$build_dir/06-helmet-restored.png" \
-    "$build_dir/07-angle-and-frame-changed.png"
+    "$build_dir/04-armor-angle-2.png" \
+    "$build_dir/05-armor-projection-2.png" \
+    "$build_dir/06-helmet-selected.png" \
+    "$build_dir/07-helmet-hidden.png" \
+    "$build_dir/08-helmet-restored.png" \
+    "$build_dir/09-layer-l0-metadata.png" \
+    "$build_dir/10-layer-l1-metadata.png" \
+    "$build_dir/11-layer-l2-body.png" \
+    "$build_dir/12-angle-and-frame-changed.png" \
+    "$build_dir/13-next-xp-stem.png"
 for frame_path do
     test -s "$frame_path" || {
         echo "FAIL: missing captured state: $frame_path" >&2
@@ -48,6 +60,6 @@ for frame_path do
     }
 done
 
-magick -delay 55 "$@" -loop 0 "$build_dir/source-layer-contract-viewer.gif"
+magick -delay 18 "$@" -loop 0 "$build_dir/source-layer-contract-viewer.gif"
 mv -f -- "$build_dir/source-layer-contract-viewer.gif" "$gif_path"
 magick identify "$gif_path"
