@@ -35,6 +35,8 @@ The packaged corpus contains 115 reviewed XP files and 573 raw layers. The viewe
 
 ![Read-only player body, armor, and helmet source-layer contract](docs/recordings/source-layer-contract-viewer.gif)
 
+![Animated sweep through all tracked source layers](docs/recordings/source-layer-corpus-sweep.gif)
+
 The standalone product provides a visual answer to one question: how do the
 frozen reviewed source layers compose into the final sprite? The real viewer
 opens the five-layer `player-1100` asset, compares the armored composite with
@@ -46,6 +48,12 @@ animation-frame/angle state, and navigation to another XP stem.
 Terminal command entry and partial redraws are not part of the GIF. The held
 states are paced at 0.18 seconds each for fast review while the viewer's real
 frame, angle, projection, layer, and XP navigation controls remain visible.
+
+The corpus sweep is a separate README-visible asset. It renders every one of
+the 573 tracked raw layers across the 115 packaged XP files, one paged grid at
+a time. It is not a replacement for the focused interactive proof above; it
+shows that the full source-layer corpus is present, tracked, and visually
+reachable.
 
 ## Run
 
@@ -77,6 +85,6 @@ compilers, assignment saves, anchor editing, and semantic-map mutation.
 
 See [docs/provenance.md](docs/provenance.md) for source identities, hashes, and
 the visibility boundary. The reproducible capture recipe is stored
-beside the GIF, and `./scripts/build-recording.sh` rebuilds the seven-state GIF.
+beside the GIF, and `./scripts/build-recording.sh` rebuilds the thirteen-state GIF.
 Historical development records remain in
 [docs/FAILURE_LOG.md](docs/FAILURE_LOG.md).
