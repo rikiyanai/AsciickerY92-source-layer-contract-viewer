@@ -1,13 +1,18 @@
 # AsciickerY92 Source Layer Contract Viewer
 
-Derived from [msokalski/asciicker](https://github.com/msokalski/asciicker), a
-CP437 3D ASCII engine, this standalone read-only viewer inspects the reviewed
-REXPaint `.xp` source layers used by Asciicker Y9-2.
+This is a standalone terminal viewer for the reviewed REXPaint `.xp` source
+layers used by Asciicker Y9-2.
 
-## How an XP sprite becomes a source-layer contract
+Use it when you need to see what is inside the sprite source files before the
+runtime composes them: raw layers, reviewed cell roles, animation frames,
+angles, projections, and the final composed preview. It is read-only, so it is
+safe to use as an inspection tool without changing the sprite corpus or review
+data.
+
+## How an XP sprite becomes a layered sprite
 
 REXPaint stores an XP sprite as a cell atlas with raw layers. In the Y9-2
-source contract, L0 is the color-key layer, L1 is the height/metadata layer,
+source files, L0 is the color-key layer, L1 is the height/metadata layer,
 L2 is the primary body accumulator, and L3+ are ordinal visual overlays such as
 armor, helmet, or a weapon effect. The viewer preserves that raw-layer order
 while showing a read-only inspection projection; it does not claim to compile
@@ -22,38 +27,28 @@ selected panel isolates the current raw layer, and the animation panel shows
 the adjacent frame cells together. `n`/`p` moves frames, `.`/`,` moves angles,
 `r` changes projection, and `v` demonstrates the display-only hide/show seam.
 
-The frozen ledger, review decisions, and any hand-entered labels are historical
-evidence. They identify what was reviewed and why; they are not compiler or
-runtime authority. The complete non-duplicating inventory is in
+The review decisions and any hand-entered labels are historical review records.
+They identify what was reviewed and why; the viewer reads them for inspection
+but does not compile or mutate runtime data. The complete non-duplicating
+inventory is in
 [docs/historical-evidence/](docs/historical-evidence/).
 
-Direct execution reaches the intended read-only contract viewer, the frozen corpus validates,
-and the recording below keeps the product identity, visual composition, frozen
-roles, assigned-cell counts, and read-only authority boundary on one screen.
+The packaged corpus contains 115 reviewed XP files and 573 raw layers. The
+viewer reads the layer decisions and cell-role data but cannot change them.
 
-The packaged corpus contains 115 reviewed XP files and 573 raw layers. The viewer reads the frozen layer decisions and cell-role data but cannot change them.
-
-![Read-only player body, armor, and helmet source-layer contract](docs/recordings/source-layer-contract-viewer.gif)
+![Read-only player body, armor, and helmet source-layer view](docs/recordings/source-layer-contract-viewer.gif)
 
 ![Animated sweep through all tracked source layers](docs/recordings/source-layer-corpus-sweep.gif)
 
-The standalone product provides a visual answer to one question: how do the
-frozen reviewed source layers compose into the final sprite? The real viewer
-opens the five-layer `player-1100` asset, compares the armored composite with
-the selected armor or helmet layer, and shows three adjacent animation frames.
-The recording opens directly in the viewer and contains thirteen fully rendered,
-fast held states: armor frames 1-3, armor angle/projection changes, helmet
-selection, helmet hide/restore, raw L0/L1/L2 layer navigation, a changed
-animation-frame/angle state, and navigation to another XP stem.
-Terminal command entry and partial redraws are not part of the GIF. The held
-states are paced at 0.18 seconds each for fast review while the viewer's real
-frame, angle, projection, layer, and XP navigation controls remain visible.
+The focused GIF answers the main visual question: how do the reviewed source
+layers compose into the final sprite? It opens the five-layer `player-1100`
+asset, compares the armored composite with the selected armor or helmet layer,
+and shows adjacent animation frames, angle/projection changes, hide/restore,
+raw layer navigation, and navigation to another XP stem.
 
-The corpus sweep is a separate README-visible asset. It renders every one of
-the 573 tracked raw layers across the 115 packaged XP files, one paged grid at
-a time. It is not a replacement for the focused interactive proof above; it
-shows that the full source-layer corpus is present, tracked, and visually
-reachable.
+The corpus sweep renders every one of the 573 tracked raw layers across the 115
+packaged XP files, one paged grid at a time. Use it to browse the whole
+tracked source-layer corpus quickly.
 
 ## Run
 
@@ -76,7 +71,7 @@ For the compact armored view shown in the recording:
 - the packaged `.xp` sprite corpus
 - source-layer review decisions
 - per-family topology data
-- the full-cell source-layer ledger and reviewed cell roles
+- reviewed cell roles
 
 The viewer has no serialization or mutation path. It does not edit sprite files, assignments, anchors, semantic maps, or compiler/runtime state.
 
